@@ -7,21 +7,34 @@
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Mobile detection and scaling
+    const isMobile = () => window.innerWidth < 768;
+    const getScale = () => isMobile() ? 0.7 : 1;
+
     let particles = [];
     const particleCount = 60;
-    const connectionDistance = 300;
-    const disconnectDistance = 400; // Stretch further before snapping
-    const connections = new Map(); // Track connection state for smooth animations
+    const baseConnectionDistance = 300;
+    const baseDisconnectDistance = 400;
+    let connectionDistance = baseConnectionDistance;
+    let disconnectDistance = baseDisconnectDistance;
+    const connections = new Map();
     const particleSpeed = 0.3;
 
     function resize() {
         canvas.width = window.innerWidth;
         canvas.height = document.documentElement.scrollHeight;
+        // Update connection distances based on screen size
+        const scale = getScale();
+        connectionDistance = baseConnectionDistance * scale;
+        disconnectDistance = baseDisconnectDistance * scale;
     }
 
     function createParticles() {
         particles = [];
-        const minSpacing = 200; // Minimum distance between node centers
+        const scale = getScale();
+        const minSpacing = 200 * scale;
+        const baseRadius = 120 * scale;
+        const minRadius = 60 * scale;
 
         for (let i = 0; i < particleCount; i++) {
             // Interpolate between purple (#8b5cf6) and blue (#3b82f6), dimmed
@@ -58,7 +71,7 @@
                 y,
                 vx: (Math.random() - 0.5) * particleSpeed,
                 vy: (Math.random() - 0.5) * particleSpeed,
-                radius: Math.random() * 120 + 60,
+                radius: Math.random() * baseRadius + minRadius,
                 color: `rgb(${r}, ${g}, ${b})`
             });
         }
@@ -156,7 +169,7 @@
 
         ctx.globalAlpha = Math.max(0, Math.min(1, opacity));
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = 30;
+        ctx.lineWidth = 30 * getScale();
         ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
@@ -236,6 +249,39 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// ============================================
+// MOBILE MENU
+// ============================================
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+
+if (mobileMenuBtn && mobileMenu) {
+    const mobileNavLinks = mobileMenu.querySelectorAll('.mobile-nav-link');
+
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    // Handle link clicks - set active state and close menu
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            // Remove active from all links
+            mobileNavLinks.forEach(l => l.classList.remove('active'));
+            // Add active to clicked link
+            link.classList.add('active');
+            // Close menu
+            mobileMenu.classList.add('hidden');
+        });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+            mobileMenu.classList.add('hidden');
+        }
+    });
+}
 
 // ============================================
 // WAITLIST FORM
