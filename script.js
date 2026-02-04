@@ -9,16 +9,18 @@
 
     // Mobile detection and scaling
     const isMobile = () => window.innerWidth < 768;
-    const getScale = () => isMobile() ? 0.7 : 1;
+    const getScale = () => isMobile() ? 0.6 : 1;
 
     let particles = [];
-    const particleCount = 60;
+    // Fewer particles on mobile for performance
+    const getParticleCount = () => isMobile() ? 25 : 60;
     const baseConnectionDistance = 300;
     const baseDisconnectDistance = 400;
     let connectionDistance = baseConnectionDistance;
     let disconnectDistance = baseDisconnectDistance;
     const connections = new Map();
-    const particleSpeed = 0.3;
+    // Slower on mobile for smoother animation
+    const getParticleSpeed = () => isMobile() ? 0.15 : 0.3;
 
     function resize() {
         canvas.width = window.innerWidth;
@@ -32,16 +34,17 @@
     function createParticles() {
         particles = [];
         const scale = getScale();
+        const count = getParticleCount();
         const minSpacing = 200 * scale;
         const baseRadius = 120 * scale;
         const minRadius = 60 * scale;
 
-        for (let i = 0; i < particleCount; i++) {
-            // Interpolate between purple (#8b5cf6) and blue (#3b82f6), dimmed
-            const t = Math.random();
-            const r = Math.round((139 + (59 - 139) * t) * 0.20);
-            const g = Math.round((92 + (130 - 92) * t) * 0.20);
-            const b = Math.round((246 + (246 - 246) * t) * 0.20);
+        for (let i = 0; i < count; i++) {
+            // Purple tones only (#8b5cf6), dimmed with slight variation
+            const variation = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
+            const r = Math.round(139 * 0.18 * variation);
+            const g = Math.round(92 * 0.18 * variation);
+            const b = Math.round(246 * 0.18 * variation);
 
             // Try to find a position that doesn't overlap too much
             let x, y, attempts = 0;
@@ -66,11 +69,12 @@
                 if (!tooClose) break;
             } while (attempts < maxAttempts);
 
+            const speed = getParticleSpeed();
             particles.push({
                 x,
                 y,
-                vx: (Math.random() - 0.5) * particleSpeed,
-                vy: (Math.random() - 0.5) * particleSpeed,
+                vx: (Math.random() - 0.5) * speed,
+                vy: (Math.random() - 0.5) * speed,
                 radius: Math.random() * baseRadius + minRadius,
                 color: `rgb(${r}, ${g}, ${b})`
             });
@@ -169,7 +173,7 @@
 
         ctx.globalAlpha = Math.max(0, Math.min(1, opacity));
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = 30 * getScale();
+        ctx.lineWidth = isMobile() ? 15 : 30;
         ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);

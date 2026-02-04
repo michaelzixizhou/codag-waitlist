@@ -48,31 +48,22 @@
             filter: blur(8px);
         }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .accent-text {
+            color: #8b5cf6;
         }
 
-        .gradient-border {
-            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
-            padding: 1px;
-            border-radius: 9999px;
-        }
-
-        .gradient-border-inner {
-            background: #0d0d0f;
+        .accent-border {
+            border: 1px solid #8b5cf6;
             border-radius: 9999px;
         }
 
         .glow {
-            box-shadow: 0 0 60px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 60px rgba(139, 92, 246, 0.2);
         }
 
         .demo-placeholder {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1px dashed #374151;
+            background: #1a1a1f;
+            border: 1px solid #2a2a30;
         }
 
         @keyframes float {
@@ -245,7 +236,7 @@
                 <!-- Mobile Logo (above heading) -->
                 <img src="codag.svg" alt="Codag" class="h-16 mx-auto mb-6 invert md:hidden">
                 <h1 class="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black mb-4 md:mb-6 tracking-tight">
-                    The <span class="gradient-text">Visual</span> Component<br>
+                    The <span class="accent-text">Visual</span> Component<br>
                     of Agentic Coding
                 </h1>
                 <p class="text-base sm:text-lg md:text-xl text-gray-400 max-w-xl mx-auto mb-8 md:mb-10">
@@ -256,7 +247,7 @@
                 <!-- Install Buttons -->
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
                     <a href="https://marketplace.visualstudio.com/items?itemName=codag.codag"
-                       class="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold hover:opacity-90 transition-opacity whitespace-nowrap text-base">
+                       class="px-8 py-3 rounded-full bg-purple-500 text-white font-semibold hover:bg-purple-600 transition-colors whitespace-nowrap text-base">
                         Install Extension
                     </a>
                     <a href="https://github.com/michaelzixizhou/codag"
@@ -264,11 +255,14 @@
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                         Star on GitHub
                     </a>
+                    <a href="https://www.producthunt.com/products/codag?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-codag" target="_blank" rel="noopener noreferrer">
+                        <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1072900&theme=light&t=1770229268014" alt="Codag - Free, shareable AI workflow graphs from your codebase. | Product Hunt" width="250" height="54">
+                    </a>
                 </div>
 
                 <!-- Supported Providers - Infinite Carousel -->
                 <div class="mt-8 md:mt-12">
-                    <p class="text-gray-500 text-xs uppercase tracking-widest mb-4 sm:mb-6">Supports 14+ Providers</p>
+                    <p class="text-gray-500 text-xs uppercase tracking-widest mb-4 sm:mb-6">Supports 18+ Providers</p>
                     <div class="logo-carousel">
                         <div class="logo-track">
                             <!-- First set of logos -->
@@ -312,9 +306,8 @@
     <!-- Demo Section -->
     <section id="demo" class="px-4 sm:px-6 py-16 md:py-24">
         <div class="max-w-6xl mx-auto">
-<div class="demo-placeholder rounded-xl sm:rounded-2xl p-2 sm:p-4 md:p-8 text-center">
-                <div class="text-gray-500 text-sm sm:text-lg mb-2 sm:mb-4">Demo Preview</div>
-                <img src="demo.png" alt="Codag Demo" class="rounded-lg sm:rounded-xl border border-gray-800 w-full">
+<div class="rounded-xl sm:rounded-2xl overflow-hidden border border-gray-800">
+                <img src="demo.gif" alt="Codag Demo" class="w-full">
             </div>
         </div>
     </section>
@@ -323,7 +316,7 @@
     <section class="px-4 sm:px-6 py-16 md:py-24">
         <div class="max-w-6xl mx-auto">
             <h2 class="text-2xl sm:text-3xl md:text-5xl font-bold text-center mb-10 md:mb-16 fade-in">
-                Everything you need to <span class="gradient-text">understand</span> your AI code
+                Everything you need to <span class="accent-text">understand</span> your AI code
             </h2>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -335,13 +328,13 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Auto-Detection</h3>
-                    <p class="text-gray-400">Finds LLM calls across 17+ providers and 10 agentic frameworks automatically.</p>
+                    <p class="text-gray-400">Finds LLM calls across 18+ providers and 10 agentic frameworks automatically.</p>
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-blue-500/50 transition-colors fade-in">
-                    <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-purple-500/50 transition-colors fade-in">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                     </div>
@@ -350,9 +343,9 @@
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-green-500/50 transition-colors fade-in">
-                    <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-purple-500/50 transition-colors fade-in">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                     </div>
@@ -361,14 +354,14 @@
                 </div>
 
                 <!-- Feature 4 -->
-                <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-red-500/50 transition-colors fade-in">
-                    <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-purple-500/50 transition-colors fade-in">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Copilot Integration</h3>
-                    <p class="text-gray-400">Use @codag in VSCode chat to query and understand your AI workflows.</p>
+                    <h3 class="text-xl font-semibold mb-2">Export to PNG</h3>
+                    <p class="text-gray-400">Export your workflow graphs as high-resolution images to share with your team.</p>
                 </div>
             </div>
         </div>
@@ -377,9 +370,9 @@
     <!-- About Section -->
     <section id="about" class="px-4 sm:px-6 py-16 md:py-24">
         <div class="max-w-4xl mx-auto text-left">
-            <h2 class="text-2xl sm:text-3xl md:text-5xl font-bold mb-6 fade-in">About <span class="gradient-text">Codag</span></h2>
+            <h2 class="text-2xl sm:text-3xl md:text-5xl font-bold mb-6 fade-in">About <span class="accent-text">Codag</span></h2>
             <p class="text-gray-300 text-lg sm:text-xl mb-6 sm:mb-8 fade-in">
-                <span class="gradient-text font-semibold">Co</span>mpound <span class="gradient-text font-semibold">D</span>irected <span class="gradient-text font-semibold">A</span>cyclic <span class="gradient-text font-semibold">G</span>raphs
+                <span class="accent-text font-semibold">Co</span>mpound <span class="accent-text font-semibold">D</span>irected <span class="accent-text font-semibold">A</span>cyclic <span class="accent-text font-semibold">G</span>raphs
             </p>
             <p class="text-gray-400 text-base sm:text-lg mb-6 sm:mb-8 fade-in">
                 As agentic systems become more complex—multi-agent workflows, tool orchestration, RAG pipelines—understanding
@@ -396,7 +389,7 @@
     <!-- Contact Section -->
     <section id="contact" class="px-4 sm:px-6 py-16 md:py-24">
         <div class="max-w-2xl mx-auto text-center">
-            <h2 class="text-2xl sm:text-3xl md:text-5xl font-bold mb-6 fade-in">Get in <span class="gradient-text">Touch</span></h2>
+            <h2 class="text-2xl sm:text-3xl md:text-5xl font-bold mb-6 fade-in">Get in <span class="accent-text">Touch</span></h2>
             <p class="text-gray-400 text-base sm:text-lg mb-6 sm:mb-8 fade-in">Questions? Feedback? We'd love to hear from you.</p>
             <a href="mailto:michael@codag.ai" class="inline-block text-xl font-medium text-purple-400 hover:text-purple-300 transition-colors fade-in">
                 michael@codag.ai
