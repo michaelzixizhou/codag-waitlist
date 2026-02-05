@@ -23,155 +23,46 @@
 
     <!-- Lightbox Functions (must be in head for onclick handlers) -->
     <script>
-        let lbZoom = 1;
-        let lbBaseWidth = 0;
-        let lbBaseHeight = 0;
-        let lbNaturalWidth = 0;
-        let lbNaturalHeight = 0;
-        let lbDragging = false;
-        let lbStartX = 0;
-        let lbStartY = 0;
-        let lbScrollStartX = 0;
-        let lbScrollStartY = 0;
+        // Simple lightbox - just view and download
+        let currentImageSrc = '';
 
         function openLightbox(src) {
-            const lightbox = document.getElementById('lightbox');
+            const el = document.getElementById('lightbox');
             const img = document.getElementById('lightbox-img');
-            const container = document.getElementById('lightbox-container');
-            if (lightbox && img && container) {
-                img.src = src;
-                lbZoom = 1;
-                img.onload = () => {
-                    lbNaturalWidth = img.naturalWidth;
-                    lbNaturalHeight = img.naturalHeight;
-                    // Calculate base size to fit viewport (90vw x 85vh)
-                    const maxW = window.innerWidth * 0.9;
-                    const maxH = window.innerHeight * 0.85;
-                    const ratio = Math.min(maxW / lbNaturalWidth, maxH / lbNaturalHeight, 1);
-                    lbBaseWidth = lbNaturalWidth * ratio;
-                    lbBaseHeight = lbNaturalHeight * ratio;
-                    updateLightboxSize();
-                    container.scrollLeft = 0;
-                    container.scrollTop = 0;
-                };
-                lightbox.classList.remove('hidden');
-                lightbox.classList.add('flex');
-                document.body.style.overflow = 'hidden';
-            }
+            if (!el || !img) return;
+
+            currentImageSrc = src;
+            img.src = src;
+            el.classList.remove('hidden');
+            el.classList.add('flex');
+            document.body.style.overflow = 'hidden';
         }
-        function closeLightbox(event) {
-            if (lbDragging) return;
-            if (event.target.id === 'lightbox' || event.target.id === 'lightbox-container' || event.target.closest('button[data-close]')) {
-                const lightbox = document.getElementById('lightbox');
-                if (lightbox) {
-                    lightbox.classList.add('hidden');
-                    lightbox.classList.remove('flex');
+
+        function closeLightbox(e) {
+            if (e.target.id === 'lightbox' || e.target.closest('[data-close]')) {
+                const el = document.getElementById('lightbox');
+                if (el) {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
                     document.body.style.overflow = '';
                 }
             }
         }
-        function updateLightboxSize() {
-            const img = document.getElementById('lightbox-img');
-            const container = document.getElementById('lightbox-container');
-            if (img && container) {
-                // Calculate new dimensions - allow up to full native resolution
-                const maxZoom = Math.max(lbNaturalWidth / lbBaseWidth, 1);
-                const clampedZoom = Math.min(lbZoom, maxZoom);
-                const newW = lbBaseWidth * clampedZoom;
-                const newH = lbBaseHeight * clampedZoom;
-                img.style.width = newW + 'px';
-                img.style.height = newH + 'px';
-                img.style.cursor = lbZoom > 1 ? 'grab' : 'default';
-                // Update zoom display
-                const zoomDisplay = document.getElementById('zoom-display');
-                if (zoomDisplay) zoomDisplay.textContent = Math.round(lbZoom * 100) + '%';
-            }
-        }
-        function zoomLightbox(delta) {
-            const container = document.getElementById('lightbox-container');
-            const img = document.getElementById('lightbox-img');
-            if (!container || !img) return;
 
-            // Store scroll position ratios before zoom
-            const scrollCenterX = container.scrollLeft + container.clientWidth / 2;
-            const scrollCenterY = container.scrollTop + container.clientHeight / 2;
-            const ratioX = scrollCenterX / (lbBaseWidth * lbZoom);
-            const ratioY = scrollCenterY / (lbBaseHeight * lbZoom);
-
-            const maxZoom = Math.max(lbNaturalWidth / lbBaseWidth, 1);
-            lbZoom = Math.max(1, Math.min(maxZoom, lbZoom + delta));
-            updateLightboxSize();
-
-            // Restore scroll position to keep same area centered
-            const newCenterX = ratioX * (lbBaseWidth * lbZoom);
-            const newCenterY = ratioY * (lbBaseHeight * lbZoom);
-            container.scrollLeft = newCenterX - container.clientWidth / 2;
-            container.scrollTop = newCenterY - container.clientHeight / 2;
+        function downloadImage() {
+            if (!currentImageSrc) return;
+            const a = document.createElement('a');
+            a.href = currentImageSrc;
+            a.download = currentImageSrc.split('/').pop().split('?')[0];
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
-        function resetLightboxZoom() {
-            lbZoom = 1;
-            updateLightboxSize();
-            const container = document.getElementById('lightbox-container');
-            if (container) {
-                container.scrollLeft = 0;
-                container.scrollTop = 0;
-            }
-        }
+
         document.addEventListener('keydown', (e) => {
-            const lightbox = document.getElementById('lightbox');
-            if (!lightbox || lightbox.classList.contains('hidden')) return;
-            if (e.key === 'Escape') {
-                lightbox.classList.add('hidden');
-                lightbox.classList.remove('flex');
-                document.body.style.overflow = '';
-            } else if (e.key === '+' || e.key === '=') {
-                zoomLightbox(0.5);
-            } else if (e.key === '-') {
-                zoomLightbox(-0.5);
-            } else if (e.key === '0') {
-                resetLightboxZoom();
-            }
-        });
-        // Mouse wheel zoom
-        document.addEventListener('wheel', (e) => {
-            const lightbox = document.getElementById('lightbox');
-            if (!lightbox || lightbox.classList.contains('hidden')) return;
-            e.preventDefault();
-            zoomLightbox(e.deltaY > 0 ? -0.1 : 0.1);
-        }, { passive: false });
-        // Drag to pan
-        document.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('lightbox-container');
-            const img = document.getElementById('lightbox-img');
-            if (!container || !img) return;
-
-            img.addEventListener('mousedown', (e) => {
-                if (lbZoom <= 1) return;
-                e.preventDefault();
-                e.stopPropagation();
-                lbDragging = true;
-                lbStartX = e.clientX;
-                lbStartY = e.clientY;
-                lbScrollStartX = container.scrollLeft;
-                lbScrollStartY = container.scrollTop;
-                img.style.cursor = 'grabbing';
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (lbDragging) {
-                    e.preventDefault();
-                    container.scrollLeft = lbScrollStartX - (e.clientX - lbStartX);
-                    container.scrollTop = lbScrollStartY - (e.clientY - lbStartY);
-                }
-            });
-
-            document.addEventListener('mouseup', (e) => {
-                if (lbDragging) {
-                    e.stopPropagation();
-                    lbDragging = false;
-                    img.style.cursor = lbZoom > 1 ? 'grab' : 'default';
-                }
-            });
+            const el = document.getElementById('lightbox');
+            if (!el || el.classList.contains('hidden')) return;
+            if (e.key === 'Escape') closeLightbox({target: el});
         });
     </script>
 
@@ -486,8 +377,8 @@
                     </a>
                 </div>
                 <div class="fade-in">
-                    <div class="rounded-xl overflow-hidden border border-gray-800 hover:border-purple-500/50 transition-colors cursor-pointer gallery-item" onclick="openLightbox('langchain.png')">
-                        <img src="langchain.png" alt="LangChain" class="w-full hover:scale-105 transition-transform duration-300">
+                    <div class="rounded-xl overflow-hidden border border-gray-800 hover:border-purple-500/50 transition-colors cursor-pointer gallery-item" onclick="openLightbox('langchain.png?v=3')">
+                        <img src="langchain.png?v=3" alt="LangChain" class="w-full hover:scale-105 transition-transform duration-300">
                     </div>
                     <a href="https://github.com/langchain-ai/langchain" target="_blank" class="flex items-center justify-center gap-2 mt-3 text-gray-400 hover:text-white transition-colors group">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
@@ -512,25 +403,16 @@
     <!-- Lightbox Modal -->
     <div id="lightbox" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/90 backdrop-blur-sm" onclick="closeLightbox(event)">
         <!-- Close button -->
-        <button data-close onclick="closeLightbox(event)" class="absolute top-4 right-4 text-white/70 hover:text-white transition-colors p-2 z-10">
+        <button data-close class="absolute top-4 right-4 text-white/70 hover:text-white transition-colors p-2 z-10">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
-        <!-- Zoom controls -->
-        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-gray-900/80 backdrop-blur-sm rounded-full px-4 py-2 z-10">
-            <button onclick="zoomLightbox(-0.25); event.stopPropagation();" class="text-white/70 hover:text-white transition-colors p-1">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
-            </button>
-            <span id="zoom-display" class="text-white/70 text-sm font-medium min-w-[3rem] text-center">100%</span>
-            <button onclick="zoomLightbox(0.25); event.stopPropagation();" class="text-white/70 hover:text-white transition-colors p-1">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            </button>
-            <button onclick="resetLightboxZoom(); event.stopPropagation();" class="text-white/70 hover:text-white transition-colors px-2 py-1 text-xs ml-2">Reset</button>
-            <span class="text-white/50 text-xs ml-2">Scroll to zoom • Drag to pan</span>
-        </div>
-        <!-- Scrollable container for high-res zoom -->
-        <div id="lightbox-container" class="overflow-auto max-w-[90vw] max-h-[85vh] rounded-lg" onclick="event.stopPropagation()">
-            <img id="lightbox-img" src="" alt="" draggable="false" class="rounded-lg shadow-2xl select-none" style="-webkit-user-drag: none;">
-        </div>
+        <!-- Download button -->
+        <button onclick="downloadImage(); event.stopPropagation();" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-gray-900/80 backdrop-blur-sm rounded-full px-4 py-2 z-10 text-white/70 hover:text-white transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span class="text-sm font-medium">Download</span>
+        </button>
+        <!-- Image -->
+        <img id="lightbox-img" src="" alt="" class="max-w-[90vw] max-h-[85vh] object-contain rounded-lg shadow-2xl" onclick="event.stopPropagation();">
     </div>
 
     <!-- Features Section -->
@@ -583,6 +465,17 @@
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Export to PNG</h3>
                     <p class="text-gray-400">Export your workflow graphs as high-resolution images to share with your team.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-purple-500/50 transition-colors fade-in">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Native Themes</h3>
+                    <p class="text-gray-400">Graphs automatically match your VS Code theme — light or dark, no config needed.</p>
                 </div>
             </div>
         </div>
