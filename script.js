@@ -22,7 +22,7 @@
     let nodes = [];
     let edges = [];
     let pulses = [];
-    let W, H, dpr;
+    let W, H, fullH, dpr;
     let lastSpawn = 0;
 
     // Content exclusion zone — center column where text lives
@@ -43,7 +43,8 @@
     function resize() {
         dpr = window.devicePixelRatio || 1;
         W = window.innerWidth;
-        H = document.documentElement.scrollHeight;
+        H = window.innerHeight;
+        fullH = document.documentElement.scrollHeight;
         canvas.width = W * dpr;
         canvas.height = H * dpr;
         canvas.style.width = W + 'px';
@@ -58,7 +59,7 @@
         pulses = [];
 
         const cols = Math.ceil(W / GRID) + 1;
-        const rows = Math.ceil(H / GRID) + 1;
+        const rows = Math.ceil(fullH / GRID) + 1;
         const nodeMap = {};
 
         // Place nodes on a jittered grid, excluding center
@@ -194,6 +195,11 @@
     function draw(time) {
         ctx.clearRect(0, 0, W, H);
 
+        // Offset by scroll so network moves with page
+        const scrollY = window.scrollY || window.pageYOffset;
+        ctx.save();
+        ctx.translate(0, -scrollY);
+
         // Draw edges — illuminate when pulse is nearby, lerp glow
         for (const edge of edges) {
             const midX = (edge.from.x + edge.to.x) / 2;
@@ -309,6 +315,8 @@
             ctx.arc(pos.x, pos.y, 1.2, 0, Math.PI * 2);
             ctx.fill();
         }
+
+        ctx.restore();
     }
 
     let lastTime = 0;
